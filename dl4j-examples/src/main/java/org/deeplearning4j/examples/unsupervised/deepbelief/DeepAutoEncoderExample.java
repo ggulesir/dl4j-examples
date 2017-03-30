@@ -37,7 +37,7 @@ public class DeepAutoEncoderExample {
         int iterations = 1;
         int listenerFreq = iterations/5;
 
-        log.info("Load data....");
+        log.info("Load data.....");
         DataSetIterator iter = new MnistDataSetIterator(batchSize,numSamples,true);
 
         log.info("Build model....");

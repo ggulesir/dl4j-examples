@@ -2,9 +2,11 @@ package org.deeplearning4j.examples.unsupervised.deepbelief;
 
     import org.datavec.api.records.reader.RecordReader;
     import org.datavec.api.records.reader.impl.csv.CSVNLinesSequenceRecordReader;
+    import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
     import org.datavec.api.split.FileSplit;
     import org.datavec.api.util.ClassPathResource;
     import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+    import org.deeplearning4j.eval.Evaluation;
     import org.deeplearning4j.nn.api.OptimizationAlgorithm;
     import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
     import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -14,6 +16,7 @@ package org.deeplearning4j.examples.unsupervised.deepbelief;
     import org.deeplearning4j.nn.weights.WeightInit;
     import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
     import org.nd4j.linalg.activations.Activation;
+    import org.nd4j.linalg.api.ndarray.INDArray;
     import org.nd4j.linalg.dataset.DataSet;
     import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
     import org.nd4j.linalg.lossfunctions.LossFunctions;
@@ -43,8 +46,15 @@ public class DBNAnomaly {
         RecordReader recordReader = new CSVNLinesSequenceRecordReader(1, 0, ",");
         recordReader.initialize(new FileSplit(new ClassPathResource("ucarTrain.txt").getFile()));
 
+
+        RecordReader recordReaderTest = new CSVRecordReader(0,",");
+        recordReaderTest.initialize(new FileSplit(new ClassPathResource("carTest.txt").getFile()));
+        //reader,label index,number of possible labels
+        DataSetIterator iteratorTest = new RecordReaderDataSetIterator(recordReaderTest, batchSize, 0,4);
+
         log.info("Load data....");
         DataSetIterator iterator = new RecordReaderDataSetIterator(recordReader,batchSize);
+
 
         log.info("Build model....");
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()

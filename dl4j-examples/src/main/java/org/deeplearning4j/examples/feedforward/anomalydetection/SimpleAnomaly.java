@@ -87,7 +87,7 @@ public class SimpleAnomaly {
 
         RecordReader uTestRecordReader = new CSVNLinesSequenceRecordReader(1, 0, ",");
         uTestRecordReader.initialize(new FileSplit(new ClassPathResource("ucarTest.txt").getFile()));
-        DataSetIterator uTestIterator = new RecordReaderDataSetIterator(recordReader,batchSize);
+        DataSetIterator uTestIterator = new RecordReaderDataSetIterator(uTestRecordReader,batchSize);
 
         RecordReader testRecordReader = new CSVNLinesSequenceRecordReader(1, 0, ",");
         testRecordReader.initialize(new FileSplit(new ClassPathResource("carTest.txt").getFile()));

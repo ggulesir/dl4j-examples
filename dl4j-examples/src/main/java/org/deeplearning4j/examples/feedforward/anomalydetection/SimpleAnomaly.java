@@ -187,9 +187,9 @@ public class SimpleAnomaly {
             List<Pair<Double,INDArray>> list = listsByLabel.get(i);
             for( int j=0; j<5; j++ ){
                 best.add(list.get(j).getRight());
-                System.out.println("Best " + (j+1) + "th score: " + list.get(j).getLeft());
+                System.out.println("Best " + (j+1) + "th score from class " + i + ": " + list.get(j).getLeft());
                 worst.add(list.get(list.size()-j-1).getRight());
-                //System.out.println("Worst " + (j+1) + "th score: " + list.get(list.size()-j-1).getLeft());
+                //System.out.println("Worst " + (j+1) + "th score from class " + i + ": " + list.get(list.size()-j-1).getLeft());
             }
         }
 

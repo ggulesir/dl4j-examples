@@ -7,6 +7,8 @@ import org.datavec.api.records.reader.impl.csv.CSVNLinesSequenceRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.datavec.api.util.ClassPathResource;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.deeplearning4j.eval.Evaluation;
+import org.deeplearning4j.examples.dataexamples.BasicCSVClassifier;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -18,6 +20,9 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RefineryUtilities;
 import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.api.complex.IComplexNDArray;
+import org.nd4j.linalg.api.complex.IComplexNumber;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
@@ -34,9 +39,15 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.SplitTestAndTrain;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.indexing.INDArrayIndex;
+import org.nd4j.linalg.indexing.ShapeOffsetResolution;
+import org.nd4j.linalg.indexing.conditions.Condition;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.nio.IntBuffer;
 import java.util.*;
 import java.util.List;
 
@@ -60,6 +71,8 @@ import static org.jfree.chart.ChartFactory.*;
  * @author gizem
  */
 public class SimpleAnomaly {
+
+    private static Logger log = LoggerFactory.getLogger(SimpleAnomaly.class);
 
     public static void main(String[] args) throws Exception {
 
@@ -110,6 +123,7 @@ public class SimpleAnomaly {
         List<INDArray> featuresTest = new ArrayList<>();
         List<INDArray> featuresUTest = new ArrayList<>();
 
+
         //Random r = new Random(seed);
         while(iterator.hasNext() && testIterator.hasNext() && uTestIterator.hasNext()){
             DataSet ds = iterator.next();
@@ -130,6 +144,7 @@ public class SimpleAnomaly {
             System.out.println("Epoch " + epoch + " complete");
         }
 
+        INDArray arrayLabels = Nd4j.create(1,NUM_OF_ROWS);
         //Evaluate the model on the test data
         //Score each example in the test set separately
         //Compose a map that relates each digit to a list of (score, example) pairs
@@ -145,6 +160,7 @@ public class SimpleAnomaly {
                 INDArray example4Label = testData4Label.getRow(j);
                 int label = (int) example4Label.getDouble(j,0);
                 INDArray example = testData.getRow(j);
+                arrayLabels.add(label);
                 double score = net.score(new DataSet(example,example));
                 // Add (score, example) pair to the appropriate list
                 List allPairs = listsByLabel.get(label);
@@ -171,13 +187,15 @@ public class SimpleAnomaly {
             List<Pair<Double,INDArray>> list = listsByLabel.get(i);
             for( int j=0; j<5; j++ ){
                 best.add(list.get(j).getRight());
+                System.out.println("Best " + (j+1) + "th score: " + list.get(j).getLeft());
                 worst.add(list.get(list.size()-j-1).getRight());
+                //System.out.println("Worst " + (j+1) + "th score: " + list.get(list.size()-j-1).getLeft());
             }
         }
 
         XYSeriesCollection collection = new XYSeriesCollection();
         createSeries(collection, best.get(0), 0, "Best");
-        createSeries(collection, best.get(1), 0, "'nd Best");
+        createSeries(collection, best.get(1), 0, "2nd Best");
         createSeries(collection, worst.get(0), 0, "Worst");
         createSeries(collection, worst.get(1), 0, "2nd Worst");
 

@@ -82,7 +82,7 @@ public class SimpleAnomaly {
         final int NUMBER_OF_COLUMNS = 577;
         final int numSamples = 34620;
         int batchSize = 1;
-        final int seed = 1234;
+        final int seed = 2457;
 
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
             .seed(seed)
@@ -91,8 +91,8 @@ public class SimpleAnomaly {
             .updater(Updater.ADAGRAD)
             .activation(Activation.RELU)
             .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-            .learningRate(0.05)
-            //.learningRate(0.03) gives slightly better result
+            //.learningRate(0.05) //gives slightly worse result
+            .learningRate(0.03)
             .regularization(true).l2(0.0001)
             .list()
             .layer(0, new DenseLayer.Builder().nIn(NUMBER_OF_COLUMNS).nOut(100)

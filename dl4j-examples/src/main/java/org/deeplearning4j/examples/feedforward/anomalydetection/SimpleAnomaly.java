@@ -57,16 +57,18 @@ import static org.jfree.chart.ChartFactory.*;
  * Created by gizem on 4/8/17.
  */
 
-
-/**Example: Anomaly Detection on MNIST using simple autoencoder without pretraining
- * The goal is to identify outliers digits, i.e., those digits that are unusual or
- * not like the typical digits.
+/* Anomaly Detection using simple autoencoder without pretraining
  * This is accomplished in this example by using reconstruction error: stereotypical
  * examples should have low reconstruction error, whereas outliers should have high
- * reconstruction error
- * @author Alex Black
- * ucarTrain.txt unlabelled car sensor time series 577 columns 60 rows total 34620 readings
- * carTest.txt (for testing) labelled car sensor time series 0th column labels 0 to 3, # of labels 4
+ * reconstruction error. All datasets has same size and dimensions
+ *       577 columns 60 rows total 34620 readings
+ *
+ * ucarTrain.txt unlabelled car sensor training time series
+ *
+ * carTest.txt (for testing) labelled car sensor time series
+ *      0th column corresponds to label in range [0,3]
+ *      total # of labels is 4
+ *
  * ucarTest.txt unlabelled car sensor test data
  * @author gizem
  */
@@ -90,6 +92,7 @@ public class SimpleAnomaly {
             .activation(Activation.RELU)
             .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
             .learningRate(0.05)
+            //.learningRate(0.03) gives slightly better result
             .regularization(true).l2(0.0001)
             .list()
             .layer(0, new DenseLayer.Builder().nIn(NUMBER_OF_COLUMNS).nOut(100)
@@ -144,7 +147,9 @@ public class SimpleAnomaly {
             System.out.println("Epoch " + epoch + " complete");
         }
 
+        // Create simple array for printing out best & worst scores from each class type
         INDArray arrayLabels = Nd4j.create(1,NUM_OF_ROWS);
+
         //Evaluate the model on the test data
         //Score each example in the test set separately
         //Compose a map that relates each digit to a list of (score, example) pairs
@@ -180,7 +185,7 @@ public class SimpleAnomaly {
             Collections.sort(allPairs, c);
         }
 
-        //After sorting, select N best and N worst scores (by reconstruction error) for each digit, where N=5
+        //After sorting, select N best and N worst scores (by reconstruction error) for each class, where N=5
         List<INDArray> best = new ArrayList<>(20);
         List<INDArray> worst = new ArrayList<>(20);
         for( int i=0; i<4; i++ ){

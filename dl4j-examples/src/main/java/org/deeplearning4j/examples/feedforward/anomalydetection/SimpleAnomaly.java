@@ -83,6 +83,7 @@ public class SimpleAnomaly {
         final int numSamples = 34620;
         int batchSize = 1;
         final int seed = 2457;
+        int nEpochs = 100;
 
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
             .seed(seed)
@@ -91,9 +92,8 @@ public class SimpleAnomaly {
             .updater(Updater.ADAGRAD)
             .activation(Activation.RELU)
             .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-            //.learningRate(0.05) //gives slightly worse result
-            .learningRate(0.03)
-            .regularization(true).l2(0.0001)
+            .learningRate(0.01)
+            .regularization(true).l2(0.0001).dropOut(0.5)
             .list()
             .layer(0, new DenseLayer.Builder().nIn(NUMBER_OF_COLUMNS).nOut(100)
                 .build())
@@ -139,7 +139,6 @@ public class SimpleAnomaly {
 
 
         //Train model:
-        int nEpochs = 30;
         for( int epoch=0; epoch<nEpochs; epoch++ ){
             for(INDArray data : featuresTrain){
                 net.fit(data,data);
@@ -192,10 +191,10 @@ public class SimpleAnomaly {
             List<Pair<Double,INDArray>> list = listsByLabel.get(i);
             for( int j=0; j<5; j++ ){
                 best.add(list.get(j).getRight());
-                System.out.println("Best " + (j+1) + "th score from class " + i + ": " + list.get(j).getLeft());
                 worst.add(list.get(list.size()-j-1).getRight());
-                //System.out.println("Worst " + (j+1) + "th score from class " + i + ": " + list.get(list.size()-j-1).getLeft());
             }
+            System.out.println("Best score from class " + i + " : " + list.get(0).getLeft());
+            System.out.println("Worst score from class " + i + ": " + list.get(list.size()-1).getLeft());
         }
 
         XYSeriesCollection collection = new XYSeriesCollection();

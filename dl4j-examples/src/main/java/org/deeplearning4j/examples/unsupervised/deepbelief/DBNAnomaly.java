@@ -48,7 +48,6 @@ package org.deeplearning4j.examples.unsupervised.deepbelief;
  */
 public class DBNAnomaly {
 
-
     private static Logger log = LoggerFactory.getLogger(DBNAnomaly.class);
 
     public static void main(String[] args) throws Exception {
@@ -166,10 +165,10 @@ public class DBNAnomaly {
             List<Pair<Double,INDArray>> list = listsByLabel.get(i);
             for( int j=0; j<5; j++ ){
                 best.add(list.get(j).getRight());
-                System.out.println("Best " + (j+1) + "th score from class " + i + ": " + list.get(j).getLeft());
                 worst.add(list.get(list.size()-j-1).getRight());
-                //System.out.println("Worst " + (j+1) + "th score from class " + i + ": " + list.get(list.size()-j-1).getLeft());
             }
+            System.out.println("Best score from class " + i + " : " + list.get(0).getLeft());
+            System.out.println("Worst score from class " + i + ": " + list.get(list.size()-1).getLeft());
         }
 
         XYSeriesCollection collection = new XYSeriesCollection();

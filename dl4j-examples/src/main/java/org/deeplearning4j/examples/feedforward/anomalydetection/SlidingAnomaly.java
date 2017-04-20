@@ -217,7 +217,7 @@ public class SlidingAnomaly {
      */
     private static void plotDataset(XYSeriesCollection c) {
 
-        String title = "Anomaly Example";
+        String title = "Sliding Anolmaly";
         String xAxisLabel = "Timestep";
         String yAxisLabel = "Sensor readings";
         PlotOrientation orientation = PlotOrientation.VERTICAL;

@@ -223,7 +223,7 @@ public class SimpleAnomaly {
      */
     private static void plotDataset(XYSeriesCollection c) {
 
-        String title = "Anomaly Example";
+        String title = "Simple Anomaly";
         String xAxisLabel = "Timestep";
         String yAxisLabel = "Sensor readings";
         PlotOrientation orientation = PlotOrientation.VERTICAL;

@@ -57,7 +57,8 @@ public class DBNAnomaly {
         int seed = 123;
         int batchSize = 1;
         int iterations = 1;
-        int listenerFreq = iterations/5;
+        int listenerFreq = 100;
+        int nEpochs = 10;
 
         RecordReader recordReader = new CSVNLinesSequenceRecordReader(1, 0, ",");
         recordReader.initialize(new FileSplit(new ClassPathResource("ucarTrain.txt").getFile()));
@@ -112,7 +113,6 @@ public class DBNAnomaly {
         }
 
         //Train model:
-        int nEpochs = 1;
         for( int epoch=0; epoch<nEpochs; epoch++ ){
             for(INDArray data : featuresTrain){
                 model.fit(data,data);
@@ -197,7 +197,7 @@ public class DBNAnomaly {
      */
     private static void plotDataset(XYSeriesCollection c) {
 
-        String title = "Anomaly Example";
+        String title = "DBN Anomaly";
         String xAxisLabel = "Timestep";
         String yAxisLabel = "Sensor readings";
         PlotOrientation orientation = PlotOrientation.VERTICAL;

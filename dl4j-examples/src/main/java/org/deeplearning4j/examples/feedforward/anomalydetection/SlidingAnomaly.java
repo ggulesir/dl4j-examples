@@ -69,6 +69,9 @@ public class SlidingAnomaly {
         int windowSize = 200;
         int batchSize = 1;
         final int seed = 2457;
+        int nEpochs = 1;
+        INDArray window;
+        double score;
 
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
             .seed(seed)
@@ -120,15 +123,11 @@ public class SlidingAnomaly {
             featuresUTest.add(dsuTest.getFeatureMatrix());
         }
 
-
-        INDArray window = Nd4j.create(1,windowSize);
-
         //Train model:
-        int nEpochs = 2;
         for( int epoch=0; epoch<nEpochs; epoch++ ){
             for(INDArray data : featuresTrain){
                 // Shift the window by 1
-                for (int i = 0; i< (NUMBER_OF_COLUMNS - windowSize + 1); i++) {
+                for (int i = 0; i<(NUMBER_OF_COLUMNS - windowSize + 1); i++) {
                     window = data.get(NDArrayIndex.interval(i,windowSize+i,false));
                     net.fit(window,window);
                 }
@@ -136,6 +135,113 @@ public class SlidingAnomaly {
             System.out.println("Epoch " + epoch + " complete");
         }
 
+        // Create simple array for printing out best & worst scores from each class type
+        INDArray arrayLabels = Nd4j.create(1,NUM_OF_ROWS);
 
+        //Evaluate the model on the test data
+        //Score each example in the test set separately
+        //Compose a map that relates each digit to a list of (score, example) pairs
+        //Then find N best and N worst scores per digit
+        Map<Integer,List<Pair<Double,INDArray>>> listsByLabel = new HashMap<>();
+        for( int i=0; i<4; i++ ) listsByLabel.put(i,new ArrayList<>());
+
+        for( int i=0; i<featuresTest.size(); i++ ){
+            INDArray testData4Label = featuresTest.get(i);
+            INDArray testData = featuresUTest.get(i);
+            int nRows = testData4Label.rows();
+            for( int j=0; j<nRows; j++){
+                INDArray example4Label = testData4Label.getRow(j);
+                int label = (int) example4Label.getDouble(j,0);
+                INDArray example = testData.getRow(j);
+                arrayLabels.add(label);
+                for (int k = 0; k<(NUMBER_OF_COLUMNS - windowSize + 1); k++) {
+                    window = example.get(NDArrayIndex.interval(k,windowSize+k,false));
+                    score = net.score(new DataSet(window, window));
+                    // Add (score, example) pair to the appropriate list
+                    List allPairs = listsByLabel.get(label);
+                    allPairs.add(new ImmutablePair<>(score, window));
+                }
+
+            }
+        }
+
+        //Sort each list in the map by score
+        Comparator<Pair<Double, INDArray>> c = new Comparator<Pair<Double, INDArray>>() {
+            @Override
+            public int compare(Pair<Double, INDArray> o1, Pair<Double, INDArray> o2) {
+                return Double.compare(o1.getLeft(),o2.getLeft());
+            }
+        };
+
+        for(List<Pair<Double, INDArray>> allPairs : listsByLabel.values()){
+            Collections.sort(allPairs, c);
+        }
+
+        //After sorting, select N best and N worst scores (by reconstruction error) for each class, where N=5
+        List<INDArray> best = new ArrayList<>(20);
+        List<INDArray> worst = new ArrayList<>(20);
+        for( int i=0; i<4; i++ ){
+            List<Pair<Double,INDArray>> list = listsByLabel.get(i);
+            for( int j=0; j<5; j++ ){
+                best.add(list.get(j).getRight());
+                worst.add(list.get(list.size()-j-1).getRight());
+            }
+            System.out.println("Best score from class " + i + " : " + list.get(0).getLeft());
+            System.out.println("Worst score from class " + i + ": " + list.get(list.size()-1).getLeft());
+        }
+
+        XYSeriesCollection collection = new XYSeriesCollection();
+        createSeries(collection, best.get(0), 0, "Best");
+        createSeries(collection, best.get(1), 0, "2nd Best");
+        createSeries(collection, worst.get(0), 0, "Worst");
+        createSeries(collection, worst.get(1), 0, "2nd Worst");
+
+        plotDataset(collection);
+
+    }
+
+    private static XYSeriesCollection createSeries(XYSeriesCollection seriesCollection, INDArray data, int offset, String name) {
+        int nCols = (int) data.lengthLong();
+        XYSeries series = new XYSeries(name);
+        for (int i = 0; i < nCols; i++) {
+            series.add(i + offset, data.getDouble(i));
+        }
+
+        seriesCollection.addSeries(series);
+
+        return seriesCollection;
+    }
+
+    /**
+     * Generate an xy plot of the datasets provided.
+     */
+    private static void plotDataset(XYSeriesCollection c) {
+
+        String title = "Anomaly Example";
+        String xAxisLabel = "Timestep";
+        String yAxisLabel = "Sensor readings";
+        PlotOrientation orientation = PlotOrientation.VERTICAL;
+        boolean legend = true;
+        boolean tooltips = false;
+        boolean urls = false;
+        JFreeChart chart = createXYLineChart(title, xAxisLabel, yAxisLabel, c, orientation, legend, tooltips, urls);
+
+        // get a reference to the plot for further customisation...
+        final XYPlot plot = chart.getXYPlot();
+
+        // Auto zoom to fit time series in initial window
+        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setAutoRange(true);
+
+        JPanel panel = new ChartPanel(chart);
+
+        JFrame f = new JFrame();
+        f.add(panel);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        f.pack();
+        f.setTitle("Training Data");
+
+        RefineryUtilities.centerFrameOnScreen(f);
+        f.setVisible(true);
     }
 }

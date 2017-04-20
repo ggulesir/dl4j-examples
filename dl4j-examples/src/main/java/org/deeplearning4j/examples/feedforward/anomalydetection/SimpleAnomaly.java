@@ -199,9 +199,9 @@ public class SimpleAnomaly {
 
         XYSeriesCollection collection = new XYSeriesCollection();
         createSeries(collection, best.get(0), 0, "Best");
-        createSeries(collection, best.get(1), 0, "2nd Best");
+        //createSeries(collection, best.get(1), 0, "2nd Best");
         createSeries(collection, worst.get(0), 0, "Worst");
-        createSeries(collection, worst.get(1), 0, "2nd Worst");
+        //createSeries(collection, worst.get(1), 0, "2nd Worst");
 
         plotDataset(collection);
     }

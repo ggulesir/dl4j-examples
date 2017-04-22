@@ -7,24 +7,10 @@ import org.datavec.api.records.reader.impl.csv.CSVNLinesSequenceRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.datavec.api.util.ClassPathResource;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.eval.Evaluation;
-import org.deeplearning4j.examples.dataexamples.BasicCSVClassifier;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.general.Dataset;
-import org.jfree.data.xy.XYSeries;
+import org.deeplearning4j.examples.utilities.Visualization;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.RefineryUtilities;
 import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.api.buffer.DataBuffer;
-import org.nd4j.linalg.api.complex.IComplexNDArray;
-import org.nd4j.linalg.api.complex.IComplexNumber;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
-import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -37,21 +23,13 @@ import org.deeplearning4j.optimize.api.IterationListener;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
-import org.nd4j.linalg.dataset.SplitTestAndTrain;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.indexing.INDArrayIndex;
-import org.nd4j.linalg.indexing.ShapeOffsetResolution;
-import org.nd4j.linalg.indexing.conditions.Condition;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
-import java.nio.IntBuffer;
 import java.util.*;
 import java.util.List;
 
-import static org.jfree.chart.ChartFactory.*;
 
 /**
  * Created by gizem on 4/8/17.
@@ -198,57 +176,12 @@ public class SimpleAnomaly {
         }
 
         XYSeriesCollection collection = new XYSeriesCollection();
-        createSeries(collection, best.get(0), 0, "Best");
+        Visualization.createSeries(collection, best.get(0), 0, "Best");
         //createSeries(collection, best.get(1), 0, "2nd Best");
-        createSeries(collection, worst.get(0), 0, "Worst");
+        Visualization.createSeries(collection, worst.get(0), 0, "Worst");
         //createSeries(collection, worst.get(1), 0, "2nd Worst");
 
-        plotDataset(collection);
-    }
-
-    private static XYSeriesCollection createSeries(XYSeriesCollection seriesCollection, INDArray data, int offset, String name) {
-        int nCols = (int) data.lengthLong();
-        XYSeries series = new XYSeries(name);
-        for (int i = 0; i < nCols; i++) {
-            series.add(i + offset, data.getDouble(i));
-        }
-
-        seriesCollection.addSeries(series);
-
-        return seriesCollection;
-    }
-
-    /**
-     * Generate an xy plot of the datasets provided.
-     */
-    private static void plotDataset(XYSeriesCollection c) {
-
-        String title = "Simple Anomaly";
-        String xAxisLabel = "Timestep";
-        String yAxisLabel = "Sensor readings";
-        PlotOrientation orientation = PlotOrientation.VERTICAL;
-        boolean legend = true;
-        boolean tooltips = false;
-        boolean urls = false;
-        JFreeChart chart = createXYLineChart(title, xAxisLabel, yAxisLabel, c, orientation, legend, tooltips, urls);
-
-        // get a reference to the plot for further customisation...
-        final XYPlot plot = chart.getXYPlot();
-
-        // Auto zoom to fit time series in initial window
-        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setAutoRange(true);
-
-        JPanel panel = new ChartPanel(chart);
-
-        JFrame f = new JFrame();
-        f.add(panel);
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.pack();
-        f.setTitle("Training Data");
-
-        RefineryUtilities.centerFrameOnScreen(f);
-        f.setVisible(true);
+        Visualization.plotDataset(collection);
     }
 
 }

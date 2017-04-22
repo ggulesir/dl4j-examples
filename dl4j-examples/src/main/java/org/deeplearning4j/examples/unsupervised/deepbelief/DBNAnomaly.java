@@ -9,6 +9,7 @@ package org.deeplearning4j.examples.unsupervised.deepbelief;
     import org.datavec.api.util.ClassPathResource;
     import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
     import org.deeplearning4j.eval.Evaluation;
+    import org.deeplearning4j.examples.utilities.Visualization;
     import org.deeplearning4j.nn.api.OptimizationAlgorithm;
     import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
     import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -38,6 +39,7 @@ package org.deeplearning4j.examples.unsupervised.deepbelief;
     import javax.swing.*;
     import java.util.*;
 
+    import static org.deeplearning4j.examples.utilities.Visualization.plotDataset;
     import static org.jfree.chart.ChartFactory.createXYLineChart;
 
 /**
@@ -58,7 +60,7 @@ public class DBNAnomaly {
         int batchSize = 1;
         int iterations = 1;
         int listenerFreq = 100;
-        int nEpochs = 10;
+        int nEpochs = 1;
 
         RecordReader recordReader = new CSVNLinesSequenceRecordReader(1, 0, ",");
         recordReader.initialize(new FileSplit(new ClassPathResource("ucarTrain.txt").getFile()));
@@ -172,56 +174,11 @@ public class DBNAnomaly {
         }
 
         XYSeriesCollection collection = new XYSeriesCollection();
-        createSeries(collection, best.get(0), 0, "Best");
-        createSeries(collection, best.get(1), 0, "2nd Best");
-        createSeries(collection, worst.get(0), 0, "Worst");
-        createSeries(collection, worst.get(1), 0, "2nd Worst");
+        Visualization.createSeries(collection, best.get(0), 0, "Best");
+        Visualization.createSeries(collection, best.get(1), 0, "2nd Best");
+        Visualization.createSeries(collection, worst.get(0), 0, "Worst");
+        Visualization.createSeries(collection, worst.get(1), 0, "2nd Worst");
 
-        plotDataset(collection);
-    }
-
-    private static XYSeriesCollection createSeries(XYSeriesCollection seriesCollection, INDArray data, int offset, String name) {
-        int nCols = (int) data.lengthLong();
-        XYSeries series = new XYSeries(name);
-        for (int i = 0; i < nCols; i++) {
-            series.add(i + offset, data.getDouble(i));
-        }
-
-        seriesCollection.addSeries(series);
-
-        return seriesCollection;
-    }
-
-    /**
-     * Generate an xy plot of the datasets provided.
-     */
-    private static void plotDataset(XYSeriesCollection c) {
-
-        String title = "DBN Anomaly";
-        String xAxisLabel = "Timestep";
-        String yAxisLabel = "Sensor readings";
-        PlotOrientation orientation = PlotOrientation.VERTICAL;
-        boolean legend = true;
-        boolean tooltips = false;
-        boolean urls = false;
-        JFreeChart chart = createXYLineChart(title, xAxisLabel, yAxisLabel, c, orientation, legend, tooltips, urls);
-
-        // get a reference to the plot for further customisation...
-        final XYPlot plot = chart.getXYPlot();
-
-        // Auto zoom to fit time series in initial window
-        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setAutoRange(true);
-
-        JPanel panel = new ChartPanel(chart);
-
-        JFrame f = new JFrame();
-        f.add(panel);
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.pack();
-        f.setTitle("Training Data");
-
-        RefineryUtilities.centerFrameOnScreen(f);
-        f.setVisible(true);
+        Visualization.plotDataset(collection);
     }
 }

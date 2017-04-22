@@ -4,11 +4,9 @@ package org.deeplearning4j.examples.unsupervised.deepbelief;
     import org.apache.commons.lang3.tuple.Pair;
     import org.datavec.api.records.reader.RecordReader;
     import org.datavec.api.records.reader.impl.csv.CSVNLinesSequenceRecordReader;
-    import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
     import org.datavec.api.split.FileSplit;
     import org.datavec.api.util.ClassPathResource;
     import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-    import org.deeplearning4j.eval.Evaluation;
     import org.deeplearning4j.examples.utilities.Visualization;
     import org.deeplearning4j.nn.api.OptimizationAlgorithm;
     import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -19,14 +17,7 @@ package org.deeplearning4j.examples.unsupervised.deepbelief;
     import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
     import org.deeplearning4j.nn.weights.WeightInit;
     import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
-    import org.jfree.chart.ChartPanel;
-    import org.jfree.chart.JFreeChart;
-    import org.jfree.chart.axis.NumberAxis;
-    import org.jfree.chart.plot.PlotOrientation;
-    import org.jfree.chart.plot.XYPlot;
-    import org.jfree.data.xy.XYSeries;
     import org.jfree.data.xy.XYSeriesCollection;
-    import org.jfree.ui.RefineryUtilities;
     import org.nd4j.linalg.activations.Activation;
     import org.nd4j.linalg.api.ndarray.INDArray;
     import org.nd4j.linalg.dataset.DataSet;
@@ -36,11 +27,7 @@ package org.deeplearning4j.examples.unsupervised.deepbelief;
     import org.slf4j.Logger;
     import org.slf4j.LoggerFactory;
 
-    import javax.swing.*;
     import java.util.*;
-
-    import static org.deeplearning4j.examples.utilities.Visualization.plotDataset;
-    import static org.jfree.chart.ChartFactory.createXYLineChart;
 
 /**
  * Created by gizem on 3/30/17.

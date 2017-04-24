@@ -1,5 +1,4 @@
 package org.deeplearning4j.examples.utilities;
-
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -9,8 +8,10 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RefineryUtilities;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 import javax.swing.*;
+import java.util.List;
 
 import static org.jfree.chart.ChartFactory.createXYLineChart;
 
@@ -62,5 +63,56 @@ public class Visualization {
         seriesCollection.addSeries(series);
 
         return seriesCollection;
+    }
+
+    public static INDArray MeanOfDataset (List<INDArray> list, int rows, int columns, String name) {
+
+        // Initialize matrix with zeroes.
+        INDArray array = Nd4j.zeros(rows,columns);
+
+        // Create matrix stacking each time series vertically
+        for(INDArray data : list){
+            array = Nd4j.vstack(data,array);
+        }
+
+        // Summation along the dimension 0 (columns)
+        INDArray sumOfColumns = array.sum(0);
+
+        // Divide each element by total number of rows to find the avarage of all time series data
+        for( int i=0; i<sumOfColumns.length(); i++ ){
+            double val = sumOfColumns.getDouble(0,i);
+            sumOfColumns.putScalar(0,i, val/rows);
+        }
+
+        // plotting the mean series
+        XYSeriesCollection collection = new XYSeriesCollection();
+        Visualization.createSeries(collection, sumOfColumns, 0, "Mean of " + name);
+        Visualization.plotDataset(collection);
+
+        return sumOfColumns;
+    }
+
+    public static INDArray MeanOfDataset (XYSeriesCollection collection, List<INDArray> list, int rows, int columns, String name) {
+
+        // Initialize matrix with zeroes.
+        INDArray array = Nd4j.zeros(rows,columns);
+
+        // Create matrix stacking each time series vertically
+        for(INDArray data : list){
+            array = Nd4j.vstack(data,array);
+        }
+
+        // Summation along the dimension 0 (columns)
+        INDArray sumOfColumns = array.sum(0);
+
+        // Divide each element by total number of rows to find the avarage of all time series data
+        for( int i=0; i<sumOfColumns.length(); i++ ){
+            double val = sumOfColumns.getDouble(0,i);
+            sumOfColumns.putScalar(0,i, val/rows);
+        }
+
+        // plotting the mean series
+        Visualization.createSeries(collection, sumOfColumns, 0, "Mean of " + name);
+        return sumOfColumns;
     }
 }

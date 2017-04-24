@@ -31,9 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-import static org.deeplearning4j.examples.utilities.Visualization.createSeries;
-import static org.jfree.chart.ChartFactory.createXYLineChart;
-
 /**
  * Anomaly Detection using simple autoencoder without pretraining
  * Using sliding window for the input data

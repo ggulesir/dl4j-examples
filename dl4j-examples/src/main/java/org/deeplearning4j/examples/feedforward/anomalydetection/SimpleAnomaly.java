@@ -61,7 +61,7 @@ public class SimpleAnomaly {
         final int numSamples = 34620;
         int batchSize = 1;
         final int seed = 2457;
-        int nEpochs = 100;
+        int nEpochs = 10;
 
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
             .seed(seed)
@@ -175,12 +175,17 @@ public class SimpleAnomaly {
             System.out.println("Worst score from class " + i + ": " + list.get(list.size()-1).getLeft());
         }
 
+        Visualization.MeanOfDataset(featuresTrain, NUM_OF_ROWS, NUMBER_OF_COLUMNS, "Train Data");
+        Visualization.MeanOfDataset(featuresUTest, NUM_OF_ROWS, NUMBER_OF_COLUMNS, "Test Data");
+
         XYSeriesCollection collection = new XYSeriesCollection();
         Visualization.createSeries(collection, best.get(0), 0, "Best");
         //createSeries(collection, best.get(1), 0, "2nd Best");
         Visualization.createSeries(collection, worst.get(0), 0, "Worst");
         //createSeries(collection, worst.get(1), 0, "2nd Worst");
 
+        Visualization.MeanOfDataset(collection,featuresUTest, NUM_OF_ROWS, NUMBER_OF_COLUMNS, "Test Data");
+        Visualization.MeanOfDataset(collection,featuresTrain, NUM_OF_ROWS, NUMBER_OF_COLUMNS, "Train Data");
         Visualization.plotDataset(collection);
     }
 

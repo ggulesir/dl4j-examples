@@ -78,7 +78,7 @@ public class VAEAnomaly {
                 //Bernoulli reconstruction distribution + sigmoid activation - for modelling binary data (or data in range 0 to 1)
                 .reconstructionDistribution(new BernoulliReconstructionDistribution(Activation.SIGMOID))
                 .nIn(577)                                   //Input size: 28x28
-                .nOut(32)                                       //Size of the latent variable space: p(z|x) - 32 values
+                .nOut(32)                                   //Size of the latent variable space: p(z|x) - 32 values
                 .build())
             .pretrain(true).backprop(false).build();
 
@@ -92,8 +92,6 @@ public class VAEAnomaly {
             net.fit(trainIter);
             System.out.println("Finished epoch " + (i+1) + " of " + nEpochs);
         }
-
-
 
     }
 }

@@ -58,7 +58,6 @@ public class SimpleAnomaly {
 
         final int NUM_OF_ROWS = 60;
         final int NUMBER_OF_COLUMNS = 577;
-        final int numSamples = 34620;
         int batchSize = 1;
         final int seed = 2457;
         int nEpochs = 10;
@@ -86,7 +85,7 @@ public class SimpleAnomaly {
             .build();
 
         MultiLayerNetwork net = new MultiLayerNetwork(conf);
-        net.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(1)));
+        net.setListeners(new ScoreIterationListener(1));
 
         RecordReader recordReader = new CSVNLinesSequenceRecordReader(1, 0, ",");
         recordReader.initialize(new FileSplit(new ClassPathResource("ucarTrain.txt").getFile()));

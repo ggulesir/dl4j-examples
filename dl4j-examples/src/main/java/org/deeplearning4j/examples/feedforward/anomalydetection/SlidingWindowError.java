@@ -40,7 +40,7 @@ public class SlidingWindowError {
 
         final int NUM_OF_ROWS = 60;
         final int NUMBER_OF_COLUMNS = 577;
-        int windowSize = 200;
+        int windowSize = 100;
         int batchSize = 1;
         final int seed = 2457;
         int nEpochs = 10;
@@ -112,10 +112,8 @@ public class SlidingWindowError {
         //Evaluate the model on the test data
         //Score each example in the test set separately
         //Compose a map that relates each digit to a list of (score, example) pairs
-        Map<Integer,Double> listsByWindow = new HashMap<>();
-        for( int i=0; i<NUMBER_OF_COLUMNS - windowSize + 1; i++ ) listsByWindow.put(i,0.0);
-
-        double tempScore;
+        INDArray errorByWindow = Nd4j.create(NUM_OF_ROWS, NUMBER_OF_COLUMNS - windowSize + 1);
+        XYSeriesCollection collection = new XYSeriesCollection();
         for( int i=0; i<featuresTest.size(); i++ ){
             INDArray testData = featuresUTest.get(i);
             int nRows = testData.rows();
@@ -124,21 +122,13 @@ public class SlidingWindowError {
                 for (int k = 0; k<(NUMBER_OF_COLUMNS - windowSize + 1); k++) {
                     window = example.get(NDArrayIndex.interval(k,windowSize+k,false));
                     score = net.score(new DataSet(window, window));
-                    tempScore = score + listsByWindow.get(k);
-                    listsByWindow.put(k,tempScore);
+                    errorByWindow.put(j,k, score);
                 }
-
+                Visualization.createSeries(collection, errorByWindow.getRow(j), 0, i + "th instance");
             }
         }
-        INDArray errorList = Nd4j.create(1, NUMBER_OF_COLUMNS - windowSize + 1);
 
-        for( int i=0; i<NUMBER_OF_COLUMNS - windowSize + 1; i++ ){
-           errorList.putScalar(i,listsByWindow.get(i));
-        }
-
-        XYSeriesCollection collection = new XYSeriesCollection();
-        Visualization.createSeries(collection, errorList, 0, "Error Accumulation");
-        Visualization.plotDataset(collection);
+        Visualization.plotDataset(collection, "Sliding Anomaly Errors", "TimeStep", "Error", "Test Data");
 
     }
 }

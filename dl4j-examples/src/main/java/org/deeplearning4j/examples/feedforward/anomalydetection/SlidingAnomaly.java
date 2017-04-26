@@ -56,7 +56,7 @@ public class SlidingAnomaly {
 
         final int NUM_OF_ROWS = 60;
         final int NUMBER_OF_COLUMNS = 577;
-        int windowSize = 200;
+        int windowSize = 100;
         int batchSize = 1;
         final int seed = 2457;
         int nEpochs = 1;
@@ -186,7 +186,7 @@ public class SlidingAnomaly {
         Visualization.createSeries(collection, worst.get(0), 0, "Worst");
         Visualization.createSeries(collection, worst.get(1), 0, "2nd Worst");
 
-        Visualization.plotDataset(collection);
+        Visualization.plotDataset(collection,"Sliding Anomaly", "TimeStep", "Sensor Readings", "Test Data");
 
     }
 }

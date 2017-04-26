@@ -174,8 +174,8 @@ public class SimpleAnomaly {
             System.out.println("Worst score from class " + i + ": " + list.get(list.size()-1).getLeft());
         }
 
-        Visualization.MeanOfDataset(featuresTrain, NUM_OF_ROWS, NUMBER_OF_COLUMNS, "Train Data");
-        Visualization.MeanOfDataset(featuresUTest, NUM_OF_ROWS, NUMBER_OF_COLUMNS, "Test Data");
+        Visualization.MeanOfDataset(featuresTrain, NUM_OF_ROWS, NUMBER_OF_COLUMNS, "Mean of Train Data", "TimeStep", "Sensor Reading", "Train Data");
+        Visualization.MeanOfDataset(featuresUTest, NUM_OF_ROWS, NUMBER_OF_COLUMNS, "Mean of Test Data", "TimeStep", "Sensor Reading", "Test Data");
 
         XYSeriesCollection collection = new XYSeriesCollection();
         Visualization.createSeries(collection, best.get(0), 0, "Best");
@@ -185,7 +185,7 @@ public class SimpleAnomaly {
 
         Visualization.MeanOfDataset(collection,featuresUTest, NUM_OF_ROWS, NUMBER_OF_COLUMNS, "Test Data");
         Visualization.MeanOfDataset(collection,featuresTrain, NUM_OF_ROWS, NUMBER_OF_COLUMNS, "Train Data");
-        Visualization.plotDataset(collection);
+        Visualization.plotDataset(collection,"Mean Test and Train", "TimeStep", "Sensor Readings", "Mean");
     }
 
 }

@@ -22,11 +22,11 @@ public class Visualization {
     /**
      * Generate an xy plot of the datasets provided.
      */
-    public static void plotDataset(XYSeriesCollection c) {
+    public static void plotDataset(XYSeriesCollection c, String title, String xAxisLabel, String yAxisLabel, String frameTitle) {
 
-        String title = "Simple Anomaly";
-        String xAxisLabel = "Timestep";
-        String yAxisLabel = "Sensor readings";
+        //String title = "Simple Anomaly";
+        //String xAxisLabel = "Timestep";
+        //String yAxisLabel = "Sensor readings";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean legend = true;
         boolean tooltips = false;
@@ -46,8 +46,8 @@ public class Visualization {
         f.add(panel);
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.pack();
-        f.setTitle("Training Data");
-
+        //f.setTitle("Training Data");
+        f.setTitle(frameTitle);
         RefineryUtilities.centerFrameOnScreen(f);
         f.setVisible(true);
     }
@@ -65,7 +65,7 @@ public class Visualization {
         return seriesCollection;
     }
 
-    public static INDArray MeanOfDataset (List<INDArray> list, int rows, int columns, String name) {
+    public static INDArray MeanOfDataset (List<INDArray> list, int rows, int columns, String name, String xAxisLabel, String yAxisLabel, String frameTitle) {
 
         // Initialize matrix with zeroes.
         INDArray array = Nd4j.zeros(rows,columns);
@@ -87,8 +87,7 @@ public class Visualization {
         // plotting the mean series
         XYSeriesCollection collection = new XYSeriesCollection();
         Visualization.createSeries(collection, sumOfColumns, 0, "Mean of " + name);
-        Visualization.plotDataset(collection);
-
+        Visualization.plotDataset(collection, name, xAxisLabel, yAxisLabel, frameTitle);
         return sumOfColumns;
     }
 
@@ -115,4 +114,5 @@ public class Visualization {
         Visualization.createSeries(collection, sumOfColumns, 0, "Mean of " + name);
         return sumOfColumns;
     }
+
 }

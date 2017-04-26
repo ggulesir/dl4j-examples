@@ -166,6 +166,6 @@ public class DBNAnomaly {
         Visualization.createSeries(collection, worst.get(0), 0, "Worst");
         Visualization.createSeries(collection, worst.get(1), 0, "2nd Worst");
 
-        Visualization.plotDataset(collection);
+        Visualization.plotDataset(collection, "DBN Anomaly", "TimeStep", "Sensor Readings", "Test Data");
     }
 }

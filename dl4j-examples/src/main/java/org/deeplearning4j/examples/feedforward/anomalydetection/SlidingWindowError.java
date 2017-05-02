@@ -114,6 +114,7 @@ public class SlidingWindowError {
         //Compose a map that relates each digit to a list of (score, example) pairs
         INDArray errorByWindow = Nd4j.create(NUM_OF_ROWS, NUMBER_OF_COLUMNS - windowSize + 1);
         XYSeriesCollection collection = new XYSeriesCollection();
+        Visualization.MeanOfDataset(collection,featuresUTest, NUM_OF_ROWS, NUMBER_OF_COLUMNS, "Test Data");
         for( int i=0; i<featuresTest.size(); i++ ){
             INDArray testData = featuresUTest.get(i);
             int nRows = testData.rows();
@@ -124,11 +125,15 @@ public class SlidingWindowError {
                     score = net.score(new DataSet(window, window));
                     errorByWindow.put(j,k, score);
                 }
-                Visualization.createSeries(collection, errorByWindow.getRow(j), 0, i + "th instance");
+                Visualization.createSeries(collection, errorByWindow.getRow(j), 0, i + "th Error");
             }
         }
 
-        Visualization.plotDataset(collection, "Sliding Anomaly Errors", "TimeStep", "Error", "Test Data");
+        for( int i=0; i<featuresTest.size(); i++ ){
+            Visualization.createSeries(collection, featuresUTest.get(i), 0, i + "th Instance");
+        }
+
+        Visualization.plotDataset(collection, "Sliding Anomaly Errors", "TimeStep", "Error/Sensor Value", "Test Data");
 
     }
 }

@@ -24,9 +24,6 @@ public class Visualization {
      */
     public static void plotDataset(XYSeriesCollection c, String title, String xAxisLabel, String yAxisLabel, String frameTitle) {
 
-        //String title = "Simple Anomaly";
-        //String xAxisLabel = "Timestep";
-        //String yAxisLabel = "Sensor readings";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean legend = true;
         boolean tooltips = false;
@@ -46,7 +43,6 @@ public class Visualization {
         f.add(panel);
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.pack();
-        //f.setTitle("Training Data");
         f.setTitle(frameTitle);
         RefineryUtilities.centerFrameOnScreen(f);
         f.setVisible(true);

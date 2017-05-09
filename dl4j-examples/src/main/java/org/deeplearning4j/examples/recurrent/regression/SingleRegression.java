@@ -79,12 +79,13 @@ public class SingleRegression {
             .iterations(1)
             .weightInit(WeightInit.XAVIER)
             .updater(Updater.NESTEROVS).momentum(0.9)
-            .learningRate(0.0015)
+            .learningRate(0.0001)
+            .regularization(true).l2(0.0001)
             .list()
-            .layer(0, new GravesLSTM.Builder().activation(Activation.TANH).nIn(1).nOut(10)
+            .layer(0, new GravesLSTM.Builder().activation(Activation.TANH).nIn(1).nOut(15)
                 .build())
             .layer(1, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MSE)
-                .activation(Activation.IDENTITY).nIn(10).nOut(1).build())
+                .activation(Activation.IDENTITY).nIn(15).nOut(1).build())
             .build();
 
         MultiLayerNetwork net = new MultiLayerNetwork(conf);
@@ -93,7 +94,7 @@ public class SingleRegression {
         net.setListeners(new ScoreIterationListener(20));
 
         // ----- Train the network, evaluating the test set performance at each epoch -----
-        int nEpochs = 300;
+        int nEpochs = 100;
 
         for (int i = 0; i < nEpochs; i++) {
             net.fit(trainData);
@@ -124,8 +125,8 @@ public class SingleRegression {
         //Create plot with out data
         XYSeriesCollection c = new XYSeriesCollection();
         createSeries(c, trainData.getFeatures(), 0, "Train data");
-        createSeries(c, testData.getFeatures(), 99, "Actual test data");
-        createSeries(c, predicted, 100, "Predicted test data");
+        createSeries(c, testData.getFeatures(), 386, "Actual test data");
+        createSeries(c, predicted, 387, "Predicted test data");
 
         plotDataset(c);
 
@@ -151,7 +152,7 @@ public class SingleRegression {
 
         String title = "Regression example";
         String xAxisLabel = "Timestep";
-        String yAxisLabel = "Number of passengers";
+        String yAxisLabel = "Sensor Readings";
         PlotOrientation orientation = PlotOrientation.VERTICAL;
         boolean legend = true;
         boolean tooltips = false;

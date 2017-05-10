@@ -6,6 +6,7 @@ import org.datavec.api.split.FileSplit;
 import org.datavec.api.util.ClassPathResource;
 import org.deeplearning4j.datasets.datavec.SequenceRecordReaderDataSetIterator;
 import org.deeplearning4j.eval.RegressionEvaluation;
+import org.deeplearning4j.examples.utilities.Visualization;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -15,15 +16,7 @@ import org.deeplearning4j.nn.conf.layers.RnnOutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.RefineryUtilities;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
@@ -32,8 +25,6 @@ import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
 
 /**
  * Created by gizem on 5/2/17.
@@ -124,57 +115,12 @@ public class SingleRegression {
 
         //Create plot with out data
         XYSeriesCollection c = new XYSeriesCollection();
-        createSeries(c, trainData.getFeatures(), 0, "Train data");
-        createSeries(c, testData.getFeatures(), 386, "Actual test data");
-        createSeries(c, predicted, 387, "Predicted test data");
+        Visualization.createSeries(c, trainData.getFeatures(), 0, "Train data");
+        Visualization.createSeries(c, testData.getFeatures(), 386, "Actual test data");
+        Visualization.createSeries(c, predicted, 387, "Predicted test data");
 
-        plotDataset(c);
+        Visualization.plotDataset(c,"Regression example", "Timestep", "Sensor Readings", "Training Title");
 
         LOGGER.info("----- Example Complete -----");
-    }
-
-    private static XYSeriesCollection createSeries(XYSeriesCollection seriesCollection, INDArray data, int offset, String name) {
-        int nRows = data.shape()[2];
-        XYSeries series = new XYSeries(name);
-        for (int i = 0; i < nRows; i++) {
-            series.add(i + offset, data.getDouble(i));
-        }
-
-        seriesCollection.addSeries(series);
-
-        return seriesCollection;
-    }
-
-    /**
-     * Generate an xy plot of the datasets provided.
-     */
-    private static void plotDataset(XYSeriesCollection c) {
-
-        String title = "Regression example";
-        String xAxisLabel = "Timestep";
-        String yAxisLabel = "Sensor Readings";
-        PlotOrientation orientation = PlotOrientation.VERTICAL;
-        boolean legend = true;
-        boolean tooltips = false;
-        boolean urls = false;
-        JFreeChart chart = ChartFactory.createXYLineChart(title, xAxisLabel, yAxisLabel, c, orientation, legend, tooltips, urls);
-
-        // get a reference to the plot for further customisation...
-        final XYPlot plot = chart.getXYPlot();
-
-        // Auto zoom to fit time series in initial window
-        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setAutoRange(true);
-
-        JPanel panel = new ChartPanel(chart);
-
-        JFrame f = new JFrame();
-        f.add(panel);
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.pack();
-        f.setTitle("Training Data");
-
-        RefineryUtilities.centerFrameOnScreen(f);
-        f.setVisible(true);
     }
 }

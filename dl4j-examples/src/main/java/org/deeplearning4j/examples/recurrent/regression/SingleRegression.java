@@ -42,12 +42,12 @@ public class SingleRegression {
         String delimiter = ",";
         // ----- Load the training data -----
         SequenceRecordReader trainReader = new CSVSequenceRecordReader(numLinesToSkip,delimiter);
-        trainReader.initialize(new FileSplit(new ClassPathResource("train - train.csv").getFile()));
+        trainReader.initialize(new FileSplit(new ClassPathResource("trainSingleRegression.csv").getFile()));
         //For regression, numPossibleLabels is not used. Setting it to -1 here
         DataSetIterator trainIter = new SequenceRecordReaderDataSetIterator(trainReader, miniBatchSize, -1, 1, true);
         // ----- Load the testing data -----
         SequenceRecordReader testReader = new CSVSequenceRecordReader(numLinesToSkip,delimiter);
-        testReader.initialize(new FileSplit(new ClassPathResource("test - test.csv").getFile()));
+        testReader.initialize(new FileSplit(new ClassPathResource("testSingleRegression.csv").getFile()));
         //For regression, numPossibleLabels is not used. Setting it to -1 here
         DataSetIterator testIter = new SequenceRecordReaderDataSetIterator(testReader, miniBatchSize, -1, 1, true);
 
@@ -113,7 +113,7 @@ public class SingleRegression {
         normalizer.revert(testData);
         normalizer.revertLabels(predicted);
 
-        //Create plot with out data
+        //Create plot with out data' %67 train %33 test data
         XYSeriesCollection c = new XYSeriesCollection();
         Visualization.createSeries(c, trainData.getFeatures(), 0, "Train data");
         Visualization.createSeries(c, testData.getFeatures(), 386, "Actual test data");

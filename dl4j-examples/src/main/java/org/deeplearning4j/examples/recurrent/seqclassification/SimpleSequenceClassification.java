@@ -1,10 +1,10 @@
 package org.deeplearning4j.examples.recurrent.seqclassification;
 
-import org.datavec.api.records.reader.SequenceRecordReader;
+import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.records.reader.impl.csv.CSVNLinesSequenceRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.datavec.api.util.ClassPathResource;
-import org.deeplearning4j.datasets.datavec.SequenceRecordReaderDataSetIterator;
+import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.GradientNormalization;
@@ -17,17 +17,12 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by gizem on 5/16/17.
@@ -44,9 +39,9 @@ public class SimpleSequenceClassification {
         int numLabelClasses = 4;
         int batchSize = 1;
 
-        SequenceRecordReader train = new CSVNLinesSequenceRecordReader(1, 0, ",");
+        RecordReader train = new CSVNLinesSequenceRecordReader(1, 0, ",");
         train.initialize(new FileSplit(new ClassPathResource("trainSequenceClassification.txt").getFile()));
-        DataSetIterator trainIterator = new SequenceRecordReaderDataSetIterator(train, miniBatchSize, numLabelClasses, 0);
+        DataSetIterator trainIterator = new RecordReaderDataSetIterator(train, batchSize, 0, numLabelClasses);
 
         //Normalize the training data
         DataNormalization normalizer = new NormalizerStandardize();
@@ -54,12 +49,13 @@ public class SimpleSequenceClassification {
         trainIterator.reset();
         trainIterator.setPreProcessor(normalizer);
 
-        SequenceRecordReader test = new CSVNLinesSequenceRecordReader(1, 0, ",");
+        RecordReader test = new CSVNLinesSequenceRecordReader(1, 0, ",");
         test.initialize(new FileSplit(new ClassPathResource("testSequenceClassification.txt").getFile()));
-        DataSetIterator testIterator = new SequenceRecordReaderDataSetIterator(test, miniBatchSize, numLabelClasses, 0);
+        DataSetIterator testIterator = new RecordReaderDataSetIterator(test, batchSize, 0, numLabelClasses);
 
         //Note that we are using the exact same normalization process as the training data
         testIterator.setPreProcessor(normalizer);
+
 
         // ----- Configure the network -----
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
@@ -83,7 +79,7 @@ public class SimpleSequenceClassification {
 
 
         // ----- Train the network, evaluating the test set performance at each epoch -----
-        int nEpochs = 40;
+        int nEpochs = 15;
         String str = "Test set evaluation at epoch %d: Accuracy = %.2f, F1 = %.2f";
         for (int i = 0; i < nEpochs; i++) {
             net.fit(trainIterator);
